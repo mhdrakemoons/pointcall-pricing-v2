@@ -35,24 +35,40 @@ export function IncomeTable() {
 					<h4 className="text-sm font-semibold text-white mb-3">Pricing Tiers</h4>
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 						{pricingTiers.map((tier) => (
-							<div key={tier.id} className="p-4 rounded-lg border border-white/10 bg-white/5">
-								<div className="text-lg font-bold text-white mb-2">{tier.name}</div>
-								<div className="text-sm text-text-muted mb-3">
-									{formatCurrency(tier.monthlyFee)} / month
+							<div key={tier.id} className="p-5 rounded-lg border border-white/10 bg-white/5 flex flex-col">
+								<div className="text-lg font-bold text-white mb-4">{tier.name}</div>
+								<div className="text-green-400 mb-4 min-h-[6rem] flex flex-col justify-start">
 									{tier.monthlyFee > 0 && (
-										<span className="block mt-1">
-											+ {formatCurrencyWithDecimals(tier.perMinuteFee)} / minute
-										</span>
+										<>
+											<div className="mb-3 pb-3 border-b border-white/10">
+												<div className="text-2xl font-bold text-green-400">
+													{formatCurrency(tier.monthlyFee)} <span className="text-base font-normal text-green-300/80">per month</span>
+												</div>
+												<div className="text-[10px] text-green-300/60 mt-1.5">Platform subscription</div>
+											</div>
+											<div>
+												<div className="text-xs text-green-300/70 mb-1.5 font-medium">+ AI Voice Agents</div>
+												<div className="text-lg font-semibold text-green-400">
+													{formatCurrencyWithDecimals(tier.perMinuteFee)} <span className="text-sm font-normal text-green-300/80">per minute</span>
+												</div>
+												<div className="text-[10px] text-green-300/60 mt-1.5">Inbound & outbound calls</div>
+											</div>
+										</>
 									)}
 									{tier.monthlyFee === 0 && (
-										<span className="block mt-1 text-xs">Custom Pricing</span>
+										<div className="flex items-center justify-center h-full">
+											<span className="text-lg font-semibold text-green-400">Custom Pricing</span>
+										</div>
 									)}
 								</div>
-								<div className="text-xs text-text-muted">
-									<div className="font-medium mb-1">Includes:</div>
-									<ul className="list-disc list-inside space-y-1">
+								<div className="pt-4 border-t border-white/10">
+									<div className="text-xs font-semibold text-blue-400 mb-2">Includes:</div>
+									<ul className="space-y-1.5">
 										{tier.includes.map((item, idx) => (
-											<li key={idx}>{item}</li>
+											<li key={idx} className="text-xs text-blue-300/90 flex items-start">
+												<span className="text-blue-400 mr-2 mt-0.5">•</span>
+												<span>{item}</span>
+											</li>
 										))}
 									</ul>
 								</div>
