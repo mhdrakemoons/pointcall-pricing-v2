@@ -34,16 +34,12 @@ export function DetailsModal({ open, onClose, service }: Props) {
 			body.style.overflow = 'hidden'
 			html.style.overflow = 'hidden'
 		} else {
-			// Unlock scroll - restore position BEFORE removing fixed to prevent jump
+			// Unlock scroll - restore position smoothly after DOM updates
 			const body = document.body
 			const html = document.documentElement
 			const scrollY = scrollYRef.current
 			
-			// Restore scroll position FIRST (while still fixed, this won't be visible)
-			window.scrollTo(0, scrollY)
-			document.documentElement.scrollTop = scrollY
-			
-			// Then remove fixed positioning
+			// Remove fixed positioning first
 			body.style.position = ''
 			body.style.top = ''
 			body.style.left = ''
@@ -51,6 +47,14 @@ export function DetailsModal({ open, onClose, service }: Props) {
 			body.style.width = ''
 			body.style.overflow = ''
 			html.style.overflow = ''
+			
+			// Restore scroll position after DOM has fully updated using double requestAnimationFrame
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					window.scrollTo({ top: scrollY, left: 0, behavior: 'instant' })
+					document.documentElement.scrollTop = scrollY
+				})
+			})
 			
 			isLockedRef.current = false
 		}
@@ -62,11 +66,7 @@ export function DetailsModal({ open, onClose, service }: Props) {
 				const html = document.documentElement
 				const scrollY = scrollYRef.current
 				
-				// Restore scroll position FIRST
-				window.scrollTo(0, scrollY)
-				document.documentElement.scrollTop = scrollY
-				
-				// Then remove fixed positioning
+				// Remove fixed positioning first
 				body.style.position = ''
 				body.style.top = ''
 				body.style.left = ''
@@ -74,6 +74,14 @@ export function DetailsModal({ open, onClose, service }: Props) {
 				body.style.width = ''
 				body.style.overflow = ''
 				html.style.overflow = ''
+				
+				// Restore scroll position after DOM has fully updated using double requestAnimationFrame
+				requestAnimationFrame(() => {
+					requestAnimationFrame(() => {
+						window.scrollTo({ top: scrollY, left: 0, behavior: 'instant' })
+						document.documentElement.scrollTop = scrollY
+					})
+				})
 				
 				isLockedRef.current = false
 			}
@@ -97,11 +105,11 @@ export function DetailsModal({ open, onClose, service }: Props) {
 					leaveFrom="opacity-100"
 					leaveTo="opacity-0"
 				>
-					<div className="fixed inset-0 bg-black/60" aria-hidden="true" onClick={onClose} />
+					<div className="fixed inset-0 bg-black backdrop-blur-sm z-40" style={{ top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh', position: 'fixed' }} aria-hidden="true" onClick={onClose} />
 				</Transition.Child>
 
-				<div className="fixed inset-0 overflow-y-auto" style={{ scrollBehavior: 'auto' }}>
-					<div className="flex min-h-full items-center justify-center p-4" style={{ scrollBehavior: 'auto' }}>
+				<div className="fixed inset-0 overflow-y-auto z-50" style={{ scrollBehavior: 'auto' }}>
+					<div className="flex min-h-full items-center justify-center p-4 relative z-50" style={{ scrollBehavior: 'auto' }}>
 						<Transition.Child
 							as={Fragment}
 							enter="transition-all duration-200 ease-out"
